@@ -1,0 +1,11 @@
+{
+  "name": "oyu-pattern",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Procedural generator for Kazakh ornament",
+  "scripts": {
+    "test": "node tests/rng.test.mjs && node tests/motifs.test.mjs && node tests/compose.test.mjs && node tests/state.test.mjs",
+    "serve": "python3 -m http.server 8000"
+  }
+}
