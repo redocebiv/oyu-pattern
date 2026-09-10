@@ -2,6 +2,9 @@ import { suite } from './_assert.mjs';
 import {
   BAND_KEYS, LIMITS, MODES, MOTIF_KEYS, PALETTE_KEYS, SYMMETRY_KEYS, decode, defaults, encode,
 } from '../js/state.js';
+import { SYMMETRY_ORDER } from '../js/compose.js';
+import { BORDER_ORDER, MOTIF_ORDER, MOTIFS, BORDERS } from '../js/motifs.js';
+import { PALETTES, PALETTE_ORDER } from '../js/palette.js';
 
 const t = suite('state');
 
@@ -43,6 +46,29 @@ for (const mode of MODES) {
 for (const band of BAND_KEYS) {
   t.check(`band ${band} survives`, decode(encode({ ...sample, band })).band, band);
 }
+
+// --- the accepted values must match the real catalogues ---------------------
+//
+// These drifted once: the palette list was retyped by hand and fell out of step
+// with the palettes themselves, so two real palettes could not be reached from
+// a URL and two non-existent ones validated and then resolved to nothing.
+
+t.check('every palette key resolves to a real palette',
+  PALETTE_KEYS.filter((k) => k !== 'custom').every((k) => Boolean(PALETTES[k])), true);
+t.check('every real palette is reachable',
+  PALETTE_ORDER.every((k) => PALETTE_KEYS.includes(k)), true);
+t.ok('custom is the only key without a palette',
+  PALETTE_KEYS.filter((k) => !PALETTES[k]).join() === 'custom');
+
+t.check('every motif key resolves to a real motif',
+  MOTIF_KEYS.filter((k) => k !== 'mix').every((k) => Boolean(MOTIFS[k])), true);
+t.check('every real motif is reachable', MOTIF_ORDER.every((k) => MOTIF_KEYS.includes(k)), true);
+
+t.check('every band key resolves to a real band', BAND_KEYS.every((k) => Boolean(BORDERS[k])), true);
+t.check('every real band is reachable', BORDER_ORDER.every((k) => BAND_KEYS.includes(k)), true);
+
+t.check('symmetry keys match the symmetry groups',
+  JSON.stringify([...SYMMETRY_KEYS].sort()), JSON.stringify([...SYMMETRY_ORDER].sort()));
 
 // --- defaults ---------------------------------------------------------------
 

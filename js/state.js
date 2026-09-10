@@ -7,12 +7,21 @@
  * hand-mangled URL must degrade to a sensible pattern rather than throw.
  */
 
+import { SYMMETRY_ORDER } from './compose.js';
+import { BORDER_ORDER, MOTIF_ORDER } from './motifs.js';
+import { PALETTE_ORDER } from './palette.js';
 import { normaliseSeed, randomSeed } from './rng.js';
 
-export const MOTIF_KEYS = ['qoshqar', 'qosmuiz', 'tuietaban', 'tumarsha', 'tortushkul', 'mix'];
-export const SYMMETRY_KEYS = ['none', 'mirror', 'mirror2', 'rot4', 'rot4m'];
-export const BAND_KEYS = ['su', 'iyrek'];
-export const PALETTE_KEYS = ['kigiz', 'tengri', 'ottyn', 'dala', 'kumis', 'qara', 'custom'];
+/**
+ * The accepted values are derived from the catalogues themselves, never
+ * retyped. A hand-maintained copy drifts the moment a motif or palette is
+ * added or renamed, and the symptom is silent: the URL parameter fails
+ * validation and quietly falls back to a default.
+ */
+export const MOTIF_KEYS = [...MOTIF_ORDER, 'mix'];
+export const SYMMETRY_KEYS = [...SYMMETRY_ORDER];
+export const BAND_KEYS = [...BORDER_ORDER];
+export const PALETTE_KEYS = [...PALETTE_ORDER, 'custom'];
 export const MODES = ['carpet', 'tile'];
 
 export const LIMITS = {
