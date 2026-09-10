@@ -11,6 +11,7 @@ import { normaliseSeed, randomSeed } from './rng.js';
 
 export const MOTIF_KEYS = ['qoshqar', 'qosmuiz', 'tuietaban', 'tumarsha', 'tortushkul', 'mix'];
 export const SYMMETRY_KEYS = ['none', 'mirror', 'mirror2', 'rot4', 'rot4m'];
+export const BAND_KEYS = ['su', 'iyrek'];
 export const PALETTE_KEYS = ['kigiz', 'tengri', 'ottyn', 'dala', 'kumis', 'qara', 'custom'];
 export const MODES = ['carpet', 'tile'];
 
@@ -29,6 +30,7 @@ export function defaults() {
     stroke: 3,
     scale: 1,
     border: true,
+    band: 'su',
     palette: 'kigiz',
     colorA: '#b8352c',
     colorB: '#f0e5cf',
@@ -64,6 +66,7 @@ export function encode(state) {
     w: String(state.stroke),
     z: String(state.scale),
     b: state.border ? '1' : '0',
+    bd: state.band,
     p: state.palette,
     mode: state.mode,
     x: state.swap ? '1' : '0',
@@ -92,6 +95,7 @@ export function decode(hash) {
     stroke: num(params.get('w'), base.stroke, LIMITS.stroke),
     scale: num(params.get('z'), base.scale, LIMITS.scale),
     border: params.has('b') ? params.get('b') === '1' : base.border,
+    band: oneOf(params.get('bd'), BAND_KEYS, base.band),
     palette: oneOf(params.get('p'), PALETTE_KEYS, base.palette),
     colorA: hex(params.get('ca'), base.colorA),
     colorB: hex(params.get('cb'), base.colorB),

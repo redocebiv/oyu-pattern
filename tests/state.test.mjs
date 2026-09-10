@@ -1,6 +1,6 @@
 import { suite } from './_assert.mjs';
 import {
-  LIMITS, MODES, MOTIF_KEYS, PALETTE_KEYS, SYMMETRY_KEYS, decode, defaults, encode,
+  BAND_KEYS, LIMITS, MODES, MOTIF_KEYS, PALETTE_KEYS, SYMMETRY_KEYS, decode, defaults, encode,
 } from '../js/state.js';
 
 const t = suite('state');
@@ -40,12 +40,15 @@ for (const palette of PALETTE_KEYS) {
 for (const mode of MODES) {
   t.check(`mode ${mode} survives`, decode(encode({ ...sample, mode })).mode, mode);
 }
+for (const band of BAND_KEYS) {
+  t.check(`band ${band} survives`, decode(encode({ ...sample, band })).band, band);
+}
 
 // --- defaults ---------------------------------------------------------------
 
 const base = defaults();
 t.ok('defaults are internally valid', MOTIF_KEYS.includes(base.motif) && SYMMETRY_KEYS.includes(base.symmetry)
-  && PALETTE_KEYS.includes(base.palette) && MODES.includes(base.mode));
+  && PALETTE_KEYS.includes(base.palette) && MODES.includes(base.mode) && BAND_KEYS.includes(base.band));
 t.ok('each call gets a fresh seed', defaults().seed !== defaults().seed);
 t.check('an empty hash gives defaults for everything but the seed',
   JSON.stringify({ ...decode(''), seed: 0 }), JSON.stringify({ ...base, seed: 0 }));
@@ -57,6 +60,7 @@ t.ok('unknown motif falls back', MOTIF_KEYS.includes(hostile.motif));
 t.ok('unknown symmetry falls back', SYMMETRY_KEYS.includes(hostile.symmetry));
 t.ok('unknown palette falls back', PALETTE_KEYS.includes(hostile.palette));
 t.ok('unknown mode falls back', MODES.includes(hostile.mode));
+t.ok('unknown band falls back', BAND_KEYS.includes(hostile.band));
 t.check('grid clamps to its ceiling', hostile.grid, LIMITS.grid.max);
 t.check('stroke clamps to its floor', hostile.stroke, LIMITS.stroke.min);
 t.check('unparseable scale falls back', hostile.scale, base.scale);
