@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Oyu Pattern — Kazakh ornament generator</title>
+<meta name="description" content="A procedural generator for Kazakh ornament. Ram's horn, camel's foot, amulet and star motifs composed into felt-carpet layouts and seamless tiles. Export SVG and PNG. Runs entirely in the browser.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Oyu Pattern">
+<meta property="og:description" content="Kazakh ornament, generated. Seamless tiles and felt-carpet compositions, exported as SVG or PNG.">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='none' stroke='%23b8352c' stroke-width='9' stroke-linecap='round'><path d='M50 92 L50 58'/><path d='M50 58 C50 38 62 24 76 23 C88 22 94 33 89 43 C85 51 74 53 69 46'/><path d='M50 58 C50 38 38 24 24 23 C12 22 6 33 11 43 C15 51 26 53 31 46'/></g></svg>">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 100 100" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M50 92 L50 58"/>
+        <path d="M50 58 C50 38 62 24 76 23 C88 22 94 33 89 43 C85 51 74 53 69 46"/>
+        <path d="M50 58 C50 38 38 24 24 23 C12 22 6 33 11 43 C15 51 26 53 31 46"/>
+      </g>
+    </svg>
+    <span class="brand-text">
+      <span class="brand-name">Oyu Pattern</span>
+      <span class="brand-tag" data-i18n="app.tagline"></span>
+    </span>
+  </div>
+  <button id="lang-toggle" class="chip" type="button">EN</button>
+</header>
+
+<main>
+  <section class="stage">
+    <div class="modes" role="tablist">
+      <button class="mode" type="button" data-set-mode="carpet" data-i18n="mode.carpet" role="tab"></button>
+      <button class="mode" type="button" data-set-mode="tile" data-i18n="mode.tile" role="tab"></button>
+    </div>
+
+    <div class="twin">
+      <figure class="plate">
+        <div class="plate-art" id="art-positive"></div>
+        <figcaption data-i18n="twin.positive"></figcaption>
+      </figure>
+      <figure class="plate">
+        <div class="plate-art" id="art-negative"></div>
+        <figcaption data-i18n="twin.negative"></figcaption>
+      </figure>
+    </div>
+
+    <p class="tile-hint" id="tile-hint" data-i18n="tile.hint" hidden></p>
+
+    <dl class="readout">
+      <div><dt data-i18n="controls.motif"></dt><dd id="readout-motif">—</dd></div>
+      <div><dt data-i18n="controls.palette"></dt><dd id="readout-palette">—</dd></div>
+    </dl>
+  </section>
+
+  <aside class="controls">
+    <section class="panel">
+      <h2 data-i18n="controls.pattern"></h2>
+
+      <label class="field">
+        <span data-i18n="controls.motif"></span>
+        <select id="opt-motif"></select>
+      </label>
+
+      <label class="field">
+        <span data-i18n="controls.symmetry"></span>
+        <select id="opt-symmetry"></select>
+      </label>
+
+      <label class="field slider">
+        <span><span data-i18n="controls.grid"></span> <b id="val-grid"></b></span>
+        <input type="range" id="opt-grid">
+      </label>
+
+      <label class="field slider">
+        <span><span data-i18n="controls.stroke"></span> <b id="val-stroke"></b></span>
+        <input type="range" id="opt-stroke">
+      </label>
+
+      <label class="field slider">
+        <span><span data-i18n="controls.scale"></span> <b id="val-scale"></b></span>
+        <input type="range" id="opt-scale">
+      </label>
+
+      <div class="field-row" id="border-row">
+        <label class="toggle">
+          <input type="checkbox" id="opt-border">
+          <span data-i18n="controls.border"></span>
+        </label>
+        <label class="field compact">
+          <span data-i18n="controls.band"></span>
+          <select id="opt-band"></select>
+        </label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 data-i18n="controls.colour"></h2>
+      <div class="swatches" id="swatches"></div>
+      <p class="meaning" id="palette-meaning"></p>
+      <div class="customs" id="customs" hidden>
+        <label class="colour"><input type="color" id="opt-color-a"><span>ink</span></label>
+        <label class="colour"><input type="color" id="opt-color-b"><span>ground</span></label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 data-i18n="controls.seed"></h2>
+      <div class="seed-row">
+        <input type="text" id="opt-seed" spellcheck="false" autocomplete="off" autocapitalize="none">
+        <button id="btn-generate" class="primary" type="button" data-i18n="action.generate"></button>
+      </div>
+      <button id="btn-swap" class="ghost wide" type="button" data-i18n="action.swap"></button>
+    </section>
+
+    <section class="panel">
+      <h2 data-i18n="export.title"></h2>
+      <div class="export-grid">
+        <button id="btn-svg" class="ghost" type="button" data-i18n="export.svg"></button>
+        <button id="btn-png" class="ghost" type="button" data-i18n="export.png"></button>
+        <button id="btn-copy" class="ghost" type="button" data-i18n="export.copy"></button>
+        <button id="btn-link" class="ghost" type="button" data-i18n="export.link"></button>
+      </div>
+    </section>
+  </aside>
+
+  <section class="about">
+    <h2 data-i18n="about.title"></h2>
+    <p data-i18n="about.body"></p>
+    <p class="dim" data-i18n="about.motifs"></p>
+  </section>
+</main>
+
+<footer class="footer">
+  <span>Oyu Pattern</span>
+  <span aria-hidden="true">·</span>
+  <a href="https://github.com/redocebiv/oyu-pattern">Source</a>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,315 @@
+/* Oyu Pattern — warm paper and natural dye, the look of a textile catalogue
+   rather than a piece of software. */
+
+:root {
+  --bg: #f4efe4;
+  --panel: #fbf8f2;
+  --line: #ddd2bd;
+  --line-soft: #e8dfcd;
+  --text: #2f2822;
+  --muted: #7d7061;
+  --accent: #b8352c;
+  --shell: min(1180px, 100% - 2.5rem);
+  --radius: 12px;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #15120e;
+    --panel: #1d1913;
+    --line: #342a1f;
+    --line-soft: #26201a;
+    --text: #ece5d8;
+    --muted: #9a8b78;
+    --accent: #d9a441;
+  }
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+h1, h2 { margin: 0; font-weight: 640; letter-spacing: -0.01em; }
+p { margin: 0; }
+
+/* --- top bar -------------------------------------------------------------- */
+
+.topbar {
+  width: var(--shell);
+  margin: 0 auto;
+  padding: 1.5rem 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brand { display: flex; align-items: center; gap: 0.7rem; }
+.brand-mark { width: 30px; height: 30px; flex: none; color: var(--accent); }
+.brand-text { display: flex; flex-direction: column; line-height: 1.25; }
+.brand-name { font-size: 1.05rem; font-weight: 650; }
+.brand-tag { font-size: 0.8rem; color: var(--muted); }
+
+.chip {
+  min-width: 48px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+.chip:hover { border-color: var(--accent); }
+
+/* --- layout --------------------------------------------------------------- */
+
+main {
+  width: var(--shell);
+  margin: 0 auto;
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  grid-template-areas: "stage controls" "about controls";
+  align-items: start;
+  gap: 1.25rem;
+  padding-bottom: 2.5rem;
+}
+
+.stage { grid-area: stage; }
+.controls { grid-area: controls; display: flex; flex-direction: column; gap: 0.9rem; position: sticky; top: 1rem; }
+.about { grid-area: about; }
+
+/* --- mode tabs ------------------------------------------------------------ */
+
+.modes {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+  margin-bottom: 1rem;
+}
+.mode {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.45rem 1.2rem;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.mode.active { background: var(--accent); color: #fff; }
+
+/* --- the twin ------------------------------------------------------------- */
+
+.twin {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.plate { margin: 0; }
+.plate-art {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--panel);
+  line-height: 0;
+}
+.plate-art svg { width: 100%; height: auto; display: block; }
+.plate figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.74rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.tile-hint { margin-top: 0.75rem; font-size: 0.82rem; color: var(--muted); }
+
+.readout {
+  margin: 1.25rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line-soft);
+}
+.readout > div { display: flex; flex-direction: column; gap: 0.15rem; }
+.readout dt {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.readout dd { margin: 0; font-size: 0.92rem; }
+
+/* --- panels --------------------------------------------------------------- */
+
+.panel {
+  padding: 1rem 1.1rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+.panel h2 {
+  font-size: 0.68rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.85rem;
+}
+
+.field { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 0.8rem; }
+.field > span { font-size: 0.8rem; color: var(--muted); display: flex; justify-content: space-between; }
+.field b { color: var(--text); font-variant-numeric: tabular-nums; }
+.field.compact { margin: 0; flex: 1; }
+
+select, input[type="text"] {
+  width: 100%;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.88rem;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+  margin: 0;
+}
+
+.field-row { display: flex; align-items: flex-end; gap: 0.75rem; }
+.field-row.border-off .field.compact { opacity: 0.4; pointer-events: none; }
+
+.toggle { display: flex; align-items: center; gap: 0.45rem; font-size: 0.88rem; cursor: pointer; white-space: nowrap; }
+.toggle input { accent-color: var(--accent); width: 16px; height: 16px; }
+
+/* --- swatches ------------------------------------------------------------- */
+
+.swatches { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.4rem; }
+.swatch {
+  aspect-ratio: 1;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 0;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--ground) 0 50%, var(--ink) 50% 100%);
+}
+.swatch.active { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.meaning { margin-top: 0.7rem; font-size: 0.78rem; color: var(--muted); min-height: 2.2em; }
+
+.customs { display: flex; gap: 0.6rem; margin-top: 0.5rem; }
+.colour { display: flex; align-items: center; gap: 0.35rem; font-size: 0.76rem; color: var(--muted); }
+.colour input { width: 34px; height: 26px; padding: 0; border: 1px solid var(--line); border-radius: 6px; background: none; }
+
+/* --- buttons -------------------------------------------------------------- */
+
+.seed-row { display: flex; gap: 0.5rem; }
+.seed-row input { flex: 1; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+.primary, .ghost {
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.primary { border: 0; background: var(--accent); color: #fff; }
+.ghost { border: 1px solid var(--line); background: var(--bg); color: var(--text); }
+.ghost:hover, .primary:hover { filter: brightness(1.06); }
+.wide { width: 100%; margin-top: 0.6rem; }
+
+.export-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* --- about ---------------------------------------------------------------- */
+
+.about {
+  margin-top: 1.75rem;
+  padding: 1.25rem 1.4rem;
+  border-left: 2px solid var(--accent);
+  background: var(--panel);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  max-width: 62ch;
+}
+.about h2 { font-size: 0.95rem; margin-bottom: 0.5rem; }
+.about p { font-size: 0.9rem; color: var(--muted); }
+.about .dim { margin-top: 0.7rem; font-size: 0.84rem; }
+
+/* --- footer and toast ----------------------------------------------------- */
+
+.footer {
+  width: var(--shell);
+  margin: 0 auto;
+  padding: 1.25rem 0 1.75rem;
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+  border-top: 1px solid var(--line-soft);
+}
+.footer a { color: var(--muted); }
+.footer a:hover { color: var(--accent); }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 0.84rem;
+  font-weight: 600;
+  z-index: 10;
+}
+.toast[hidden] { display: none; }
+
+/* --- narrow screens ------------------------------------------------------- */
+
+@media (max-width: 880px) {
+  :root { --shell: calc(100% - 1.75rem); }
+  main {
+    grid-template-columns: 1fr;
+    grid-template-areas: "stage" "controls" "about";
+  }
+  .controls { position: static; }
+  .swatches { grid-template-columns: repeat(7, 1fr); }
+}
+
+@media (max-width: 560px) {
+  .twin { grid-template-columns: 1fr; gap: 1.25rem; }
+  .brand-tag { display: none; }
+  .readout { gap: 0.4rem 1.25rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}

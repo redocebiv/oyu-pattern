@@ -193,10 +193,13 @@ export function composeCarpet(state, rng) {
 
   const corners = [];
   if (hasBorder) {
-    const cornerRng = rng;
+    // Corner squares always take the geometric төртұшкүл. A horn motif turned
+    // four ways and shrunk into 56 units becomes an illegible knot; the star
+    // stays readable, and geometric forms in the corners is how the borders of
+    // real carpets are actually composed.
     const s = B / CELL;
     for (const [cx, cy] of [[0, 0], [W - B, 0], [W - B, H - B], [0, H - B]]) {
-      const cell = composeCell({ ...state, symmetry: 'rot4' }, cornerRng);
+      const cell = composeCell({ ...state, motif: 'tortushkul', symmetry: 'none', scale: 1 }, rng);
       const place = multiply(translation(cx, cy), scaling(s, s, 0));
       for (const instance of cell.instances) {
         corners.push({ d: instance.d, matrix: multiply(place, instance.matrix) });
