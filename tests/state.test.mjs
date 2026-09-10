@@ -1,0 +1,75 @@
+import { suite } from './_assert.mjs';
+import {
+  LIMITS, MODES, MOTIF_KEYS, PALETTE_KEYS, SYMMETRY_KEYS, decode, defaults, encode,
+} from '../js/state.js';
+
+const t = suite('state');
+
+// --- round trip -------------------------------------------------------------
+
+const sample = {
+  ...defaults(),
+  seed: 'abc123',
+  motif: 'tumarsha',
+  symmetry: 'rot4m',
+  grid: 4,
+  stroke: 6.5,
+  scale: 1.25,
+  border: false,
+  palette: 'custom',
+  colorA: '#112233',
+  colorB: '#445566',
+  mode: 'tile',
+  swap: true,
+};
+
+t.check('encode then decode is lossless', JSON.stringify(decode(`#${encode(sample)}`)), JSON.stringify(sample));
+t.ok('the hash carries no leading marker', !encode(sample).startsWith('#'));
+t.ok('decode tolerates a missing leading hash', decode(encode(sample)).seed === 'abc123');
+
+// Every enumerated value must survive a round trip, not just the sample's.
+for (const motif of MOTIF_KEYS) {
+  t.check(`motif ${motif} survives`, decode(encode({ ...sample, motif })).motif, motif);
+}
+for (const symmetry of SYMMETRY_KEYS) {
+  t.check(`symmetry ${symmetry} survives`, decode(encode({ ...sample, symmetry })).symmetry, symmetry);
+}
+for (const palette of PALETTE_KEYS) {
+  t.check(`palette ${palette} survives`, decode(encode({ ...sample, palette })).palette, palette);
+}
+for (const mode of MODES) {
+  t.check(`mode ${mode} survives`, decode(encode({ ...sample, mode })).mode, mode);
+}
+
+// --- defaults ---------------------------------------------------------------
+
+const base = defaults();
+t.ok('defaults are internally valid', MOTIF_KEYS.includes(base.motif) && SYMMETRY_KEYS.includes(base.symmetry)
+  && PALETTE_KEYS.includes(base.palette) && MODES.includes(base.mode));
+t.ok('each call gets a fresh seed', defaults().seed !== defaults().seed);
+t.check('an empty hash gives defaults for everything but the seed',
+  JSON.stringify({ ...decode(''), seed: 0 }), JSON.stringify({ ...base, seed: 0 }));
+
+// --- hostile input ----------------------------------------------------------
+
+const hostile = decode('#s=&m=DROP&y=../../etc&g=9999&w=-50&z=abc&b=maybe&p=none&mode=x&ca=zzzzzz&x=2');
+t.ok('unknown motif falls back', MOTIF_KEYS.includes(hostile.motif));
+t.ok('unknown symmetry falls back', SYMMETRY_KEYS.includes(hostile.symmetry));
+t.ok('unknown palette falls back', PALETTE_KEYS.includes(hostile.palette));
+t.ok('unknown mode falls back', MODES.includes(hostile.mode));
+t.check('grid clamps to its ceiling', hostile.grid, LIMITS.grid.max);
+t.check('stroke clamps to its floor', hostile.stroke, LIMITS.stroke.min);
+t.check('unparseable scale falls back', hostile.scale, base.scale);
+t.ok('a non-boolean flag reads as false', hostile.border === false && hostile.swap === false);
+t.ok('a malformed colour falls back', /^#[0-9a-f]{6}$/.test(hostile.colorA));
+t.ok('an empty seed is replaced, not left blank', hostile.seed.length > 0);
+
+t.ok('grid is always a whole number', Number.isInteger(decode('#g=3.7').grid));
+t.ok('decode never throws on junk', (() => { try { decode('#%%%&&&==='); return true; } catch { return false; } })());
+
+// --- custom colours only travel when used -----------------------------------
+
+t.ok('a named palette omits the colour keys', !encode({ ...sample, palette: 'kigiz' }).includes('ca='));
+t.ok('a custom palette carries the colour keys', encode({ ...sample, palette: 'custom' }).includes('ca='));
+
+t.close();
